@@ -1,0 +1,13 @@
+[
+		{
+		"runnerPlugin": "trueview_consumer_plugin",
+		"name": "trueview filer writer event consumer",
+		"pollFrequency": "10000",
+		"consumerPluginConfig" : {
+			"nsqdTcpAddress" : "192.168.43.50:4161",
+			"topic" : "trueview",
+			"outputDir" : ["/Users/pete_south/dev/repos/trueview/public/json_repo"],
+			"messageBatchRemoveSize" : 10
+		}			
+	}
+]

@@ -1,0 +1,11 @@
+[
+	{                    
+		"runnerPlugin": "email_proxy_post_plugin",
+		"name": "Emailer",
+		"pollFrequency": "10000",
+		"emailProxyPlufingConfig": {
+			"emailServerUrl" : "10.250.0.251:25",
+			"postUrl" : "http://localhost:8000/api/sendalert"
+		}	
+	}
+]

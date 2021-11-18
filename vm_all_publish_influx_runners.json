@@ -1,0 +1,822 @@
+[
+	{
+		"runnerPlugin": "trueview_consumer_plugin",
+		"name": "trueview filer writer event consumer",
+		"pollFrequency": "5000",
+		"consumerPluginConfig" : {
+			"nsqdTcpAddress" : "0.0.0.0:4161",
+			"topic" : "trueview",
+			"outputDir" : ["/root/trueview/public/json_repo",
+						   "/root/golangeventserver/output"],
+			"messageBatchRemoveSize" : 10000
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_stoarge_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : [	"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20type%3D%27df_complex%27%20and%20type_instance%3D%27free%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20type%3D%27df_complex%27%20and%20type_instance%3D%27reserved%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20type%3D%27df_complex%27%20and%20type_instance%3D%27used%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20type%3D%27percent_bytes%27%20and%20type_instance%3D%27free%27%20and%20instance%3D%27average%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20type%3D%27percent_bytes%27%20and%20type_instance%3D%27reserved%27%20and%20instance%3D%27average%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20type%3D%27percent_bytes%27%20and%20type_instance%3D%27used%27%20and%20instance%3D%27average%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_disk_read_write_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : [	"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdisk_read%2E*%2F%20where%20type%3D%27disk_time%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdisk_read%2E*%2F%20where%20type%3D%27disk_ops%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdisk_read%2E*%2F%20where%20type%3D%27disk_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdisk_write%2E*%2F%20where%20type%3D%27disk_time%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdisk_write%2E*%2F%20where%20type%3D%27disk_ops%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fdisk_write%2E*%2F%20where%20type%3D%27disk_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_load_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : [	"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fload_shortterm%2E*%2F%20where%20type%3D%27load%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fload_midterm%2E*%2F%20where%20type%3D%27load%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fload_longterm%2E*%2F%20wheretype%3D%27load%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_cpu_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20type%3D%27cpu%27%20and%20type_instance%3D%27user%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20type%3D%27cpu%27%20and%20type_instance%3D%27system%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20type%3D%27cpu%27%20and%20type_instance%3D%27nice%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20type%3D%27cpu%27%20and%20type_instance%3D%27interrupt%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20type%3D%27cpu%27%20and%20type_instance%3D%27idle%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_swap_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20%20where%20type%3D%27swap%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20*,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20where%20type%3D%27percent%27%20and%20type_instance%3D%27free%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20*,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20where%20type%3D%27percent%27%20and%20type_instance%3D%27used%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_memory_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fmemory_value%2E*%2F%20%20where%20type%3D%27memory%27%20and%20type_instance%3D%27active%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fmemory_value%2E*%2F%20%20where%20type%3D%27memory%27%20and%20type_instance%3D%27cache%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fmemory_value%2E*%2F%20%20where%20type%3D%27memory%27%20and%20type_instance%3D%27free%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_processes_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27zombies%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27blocked%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27idle%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27running%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27sleeping%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27stopped%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20*,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27wait%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20type%3D%27ps_state%27%20and%20type_instance%3D%27zombies%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_tcp_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27CLOSE_WAIT%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27CLOSING%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27ESTABLISHED%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27FIN_WAIT1%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27FIN_WAIT2%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27LAST_ACK%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27LISTEN%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27SYN_RECV%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27SYN_SENT%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27TIME_WAIT%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_tx_rx_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_tx%2E*%2F%20%20where%20type%3D%27if_errors%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_tx%2E*%2F%20%20where%20type%3D%27if_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_tx%2E*%2F%20%20where%20type%3D%27if_packets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_rx%2E*%2F%20%20where%20type%3D%27if_errors%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_rx%2E*%2F%20%20where%20type%3D%27if_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_rx%2E*%2F%20%20where%20type%3D%27if_packets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_uptime_chart.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fuptime_value%2E*%2F%20%20where%20type%3D%27uptime%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_1.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27hash_collisions%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_2.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_eviction%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_3.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_operation%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_4.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_ratio%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_5.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_6.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_size%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_7.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27mutex_operations%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_8.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_eviction%27%20and%20type_instance%3D%27cached%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_eviction%27%20and%20type_instance%3D%27eligible%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_eviction%27%20and%20type_instance%3D%27ineligible%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_9.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_operation%27%20and%20type_instance%3D%27allocated%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_operation%27%20and%20type_instance%3D%27deleted%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_10.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_ratio%27%20and%20type_instance%3D%27arc%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_11.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_data-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_data-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_metadata-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_metadata-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_data-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_data-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_metadata-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_metadata-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_12.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_size%27%20and%20type_instance%3D%27L2%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27cache_size%27%20and%20type_instance%3D%27arc%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_13.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20type%3D%27mutex_operations%27%20and%20type_instance%3D%27miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_14.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_rx%2E*%2F%20%20where%20type%3D%27io_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_15.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_rx%2E*%2F%20%20where%20type%3D%27io_octets%27%20and%20type_instance%3D%27L2%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_16.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_tx%2E*%2F%20%20where%20type%3D%27io_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_chart_17.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_tx%2E*%2F%20%20where%20type%3D%27io_octets%27%20and%20type_instance%3D%27L2%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_storage_gauge.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20used_percent,%20host%20,%20*%20from%20disk%20where%20fstype=%27zfs%27%20order%20by%20time%20desc%20limit%201" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_swap_gauge.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20%20where%20type%3D%27percent%27%20and%20type_instance%3D%27used%27%20ORDER%20BY%20time%20DESC%20LIMIT%201" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_file_log.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20size_bytes%20as%20value,%20host%20,%20*%20from%20%2Ffilestat%2E*%2F%20%20where%20host%3D%27trueview-demo_freehive_io%27%20ORDER%20BY%20time%20DESC%20LIMIT%2010" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_latency.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%2010",
+						 "http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_user%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%2010" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_memory.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20used_percent%20as%20value,%20host%20,%20*%20from%20%2Fmem%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%2010" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_cpu.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%2010",
+						 "http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_user%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%2010"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_memory_gauge.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20used_percent%20as%20value,%20host%20,%20*%20from%20%2Fmem%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%201" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_cpu_gauge.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%201",
+						 "http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_user%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%201"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview2_cpu_gauge.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%201",
+						 "http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_user%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20%20ORDER%20BY%20time%20DESC%20LIMIT%201"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "http_proxy_post_plugin",
+		"name": "overview_zfs_pool_size.json",
+		"pollFrequency": "5000",
+		"proxyPluginConfig" : {
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20size%20as%20value,%20host%20,%20*%20from%20zfs_pool%20order%20by%20time%20desc%20limit%2010"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	}, 
+	
+	
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_stoarge_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+		    "influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : [	"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27df_complex%27%20and%20type_instance%3D%27free%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27df_complex%27%20and%20type_instance%3D%27reserved%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27df_complex%27%20and%20type_instance%3D%27used%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27percent_bytes%27%20and%20type_instance%3D%27free%27%20and%20instance%3D%27average%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27percent_bytes%27%20and%20type_instance%3D%27reserved%27%20and%20instance%3D%27average%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020",
+							 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20host%20,%20*%20from%20%2Fdf_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27percent_bytes%27%20and%20type_instance%3D%27used%27%20and%20instance%3D%27average%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{                    
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_disk_read_write_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : [	"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdisk_read%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27disk_time%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdisk_read%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27disk_ops%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdisk_read%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27disk_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdisk_write%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27disk_time%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdisk_write%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27disk_ops%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fdisk_write%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27disk_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_load_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : [	"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fload_shortterm%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27load%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fload_midterm%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27load%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+							"http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fload_longterm%2E*%2F%20wheretype%3D%27load%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_cpu_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cpu%27%20and%20type_instance%3D%27user%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cpu%27%20and%20type_instance%3D%27system%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cpu%27%20and%20type_instance%3D%27nice%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cpu%27%20and%20type_instance%3D%27interrupt%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+					     "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fcpu_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cpu%27%20and%20type_instance%3D%27idle%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_swap_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27swap%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27percent%27%20and%20type_instance%3D%27free%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20MEAN%28value%29%20%20as%20value,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20where%20host=%27{{host_name}}%27%20and%20type%3D%27percent%27%20and%20type_instance%3D%27used%27%20and%20time%20%3E%20now%28%29%20-%202w%20GROUP%20BY%20time%281m%29%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_memory_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fmemory_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27memory%27%20and%20type_instance%3D%27active%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fmemory_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27memory%27%20and%20type_instance%3D%27cache%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fmemory_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27memory%27%20and%20type_instance%3D%27free%27%20and%20instance%3D%27average%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_processes_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27zombies%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27blocked%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27idle%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27running%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27sleeping%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27stopped%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27wait%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fprocesses_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27ps_state%27%20and%20type_instance%3D%27zombies%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_tcp_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27CLOSE_WAIT%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27CLOSING%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27ESTABLISHED%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27FIN_WAIT1%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27FIN_WAIT2%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27LAST_ACK%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27LISTEN%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27SYN_RECV%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27SYN_SENT%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Ftcpconns_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27tcp_connections%27%20and%20type_instance%3D%27TIME_WAIT%27%20and%20instance%3D%27all%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_tx_rx_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_tx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27if_errors%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_tx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27if_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_tx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27if_packets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_rx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27if_errors%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_rx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27if_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Finterface_rx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27if_packets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_uptime_chart.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fuptime_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27uptime%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_1.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27hash_collisions%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_2.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_eviction%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_3.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_operation%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_4.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_ratio%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_5.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_6.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_size%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_7.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27mutex_operations%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_8.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_eviction%27%20and%20type_instance%3D%27cached%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_eviction%27%20and%20type_instance%3D%27eligible%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_eviction%27%20and%20type_instance%3D%27ineligible%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_9.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_operation%27%20and%20type_instance%3D%27allocated%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_operation%27%20and%20type_instance%3D%27deleted%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_10.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_ratio%27%20and%20type_instance%3D%27arc%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_11.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_data-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_data-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_metadata-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27demand_metadata-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_data-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_data-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_metadata-hit%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_result%27%20and%20type_instance%3D%27prefetch_metadata-miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_12.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_size%27%20and%20type_instance%3D%27L2%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020",
+						 "http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27cache_size%27%20and%20type_instance%3D%27arc%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_13.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27mutex_operations%27%20and%20type_instance%3D%27miss%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_14.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_rx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27io_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_15.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_rx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27io_octets%27%20and%20type_instance%3D%27L2%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_16.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_tx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27io_octets%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_chart_17.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fzfs_arc_tx%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27io_octets%27%20and%20type_instance%3D%27L2%27%20ORDER%20BY%20time%20DESC%20LIMIT%2020" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview2_storage_gauge.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20used_percent,%20host%20,%20*%20from%20disk%20where%20host=%27{{host_name}}%27%20and%20fstype=%27zfs%27%20order%20by%20time%20desc%20limit%201" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview2_swap_gauge.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=collectd&q=select%20value%20as%20value,%20host%20,%20*%20from%20%2Fswap_value%2E*%2F%20%20where%20host=%27{{host_name}}%27%20and%20type%3D%27percent%27%20and%20type_instance%3D%27used%27%20ORDER%20BY%20time%20DESC%20LIMIT%201" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_file_log.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20size_bytes%20as%20value,%20host%20,%20*%20from%20%2Ffilestat%2E*%2F%20%20where%20host=%27{{host_name}}%27%20%20ORDER%20BY%20time%20DESC%20LIMIT%2010" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_latency.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20host=%27{{host_name}}27%20ORDER%20BY%20time%20DESC%20LIMIT%2010",
+						 "http://0.0.0.0:8086/query?db=telegraf&q=select%20usage_user%20as%20value,%20host%20,%20*%20from%20%2Fcpu%2E*%2F%20host=%27{{host_name}}27%20ORDER%20BY%20time%20DESC%20LIMIT%2010" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview2_memory.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20used_percent%20as%20value,%20host%20,%20*%20from%20mem%20where%20host=%27{{host_name}}%27%20order%20by%20time%20desc%20limit%2010" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview2_memory_gauge.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20used_percent%20as%20value,%20host%20,%20*%20from%20mem%20where%20host=%27{{host_name}}%27%20order%20by%20time%20desc%20limit%201" ],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview2_cpu.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20cpu%20where%20host=%27{{host_name}}%27%20order%20by%20time%20desc%20limit%2010",
+						 "http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20cpu%20where%20host=%27{{host_name}}%27%20order%20by%20time%20desc%20limit%2010"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview2_cpu_gauge.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+				"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20cpu%20where%20host=%27{{host_name}}%27%20order%20by%20time%20desc%20limit%201",
+						 "http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20usage_system%20as%20value,%20host%20,%20*%20from%20cpu%20where%20host=%27{{host_name}}%27%20order%20by%20time%20desc%20limit%201"],
+				"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	},
+	{
+		"runnerPlugin": "per_host_http_proxy_plugin",
+		"name": "overview_zfs_pool_size.json",
+		"pollFrequency": "5000",
+		"perHostProxyPluginConfig" : {
+			"influxHostsUrl" : "http://0.0.0.0:8086/query?db=collectd&pretty=true&q=show%20series%20from%20cpu_value%20where%20host!=%27%27%20and%20type_instance=%27system%27",
+			"getUrls" : ["http://0.0.0.0:8086/query?db=telegraf&pretty=true&q=select%20size%20as%20value,%20host%20,%20*%20from%20zfs_pool%20order%20by%20time%20desc%20limit%2010"],
+			"postUrl" : "http://0.0.0.0:4151/pub?topic=trueview"
+		}			
+	}
+	
+	
+]

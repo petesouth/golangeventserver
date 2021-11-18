@@ -1,0 +1,41 @@
+[
+	{
+		"runnerPlugin": "influxrest_event_alert",
+		"name": "cpu-0 percent-user",
+		"pollFrequency": "60000",
+		"alertEventConfig": {
+			"restUrl": "http://trueview-demo.freehive.io:8086/query",
+			"restQueryString": "db=graphite&q=select MEAN(\"value\")  from \"cpu-0\" where type='percent-user' and host='trueview-demo_local' and time > now() - 10m group by time(2m) ORDER BY time desc LIMIT 1",
+			"messageSentWait": "14400000",
+			"startValue": "80.0",
+			"startOperand": ">=",
+			"endValue": "",
+			"endOperand": "",
+			"emailSender": {
+				"active": true,
+				"identity": "",
+				"username": "testing4tv@gmail.com",
+				"sender": "testing4tv@gmail.com",
+				"password": "ix4life!",
+				"host": "smtp.gmail.com",
+				"port": 587,
+				"targets": [
+					"hivemind@ixsystems.com"
+				],
+				"message": "Alert cpu percent-user over 80% threshold trueview-demo_local",
+				"body": "TrueVIEW System Status Alert\n\n| System       | Serial       | Status        |\n|:-------------|:-------------|:-------------------------------------------------------------------------------------------------------------------------|\n|Trueview-demo_local | A1-948       | :cpu-u/percent-user was over 80%[(see details) http://trueview-demo.freehive.io/#/dashboard/systems/main/9} ]|\n\n\n"
+			},
+			"trueviewApiSender": {
+				"active": true,
+				"postUrl": "http://trueview-demo.freehive.io/api/v1/message/add?api_token=20ZyPBCIDPQjVkXajnyuiFslW9WJPX7WfyQTYBVzVotu9Q6fzLK5jsLnhabJ",
+				"hostname": "trueview-demo_local",
+				"message": "Alert cpu percent-user over 80% threshold trueview-demo_local"
+			},
+			"webhookSender": {
+				"active": true,
+				"postUrl": "https://slackers.freehive.io/hooks/hw5fh4xmoinitepoqha6cdudcc",
+				"message": "TrueVIEW System Status Alert\n\n| System       | Serial       | Status        |\n|:-------------|:-------------|:-------------------------------------------------------------------------------------------------------------------------|\n|Trueview-demo_local | A1-948       | :cpu-u/percent-user was over 80%[(see details) http://trueview-demo.freehive.io/#/dashboard/systems/main/9} ]|\n\n\n"
+			}
+		}
+	}
+]
